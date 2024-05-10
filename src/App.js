@@ -7,11 +7,17 @@ const initialItems = [
   ];
 
 export default function App(){
+    const[units,setUnit]=useState([]);
+    function handleAddUnit(unit){
+        setUnit((units)=>[...units,unit]);
+    }
+   
+ 
 return(
 <div className="app">
     <Logo/>
-    <Form/>
-    <Lists/>
+    <Form onAddUnits={handleAddUnit}/>
+    <Lists units={units}/>
     <Stats/>
      </div>
 );
@@ -23,45 +29,57 @@ function Logo(){
         </div>
     );
 }
-function Form(){
+function Form(onAddUnits){
     const [description,setDescription]=useState("");
-    const[quantity,setQuantity]=useState(3);
-    // page refresh hobena,single dynamic page
+    const[quantity,setQuantity]=useState(1);
+ 
+
+////// page refresh hobena,single dynamic page\\\\\\\\\
     function handleSubmit(e){
-        e.preventdefault()
+        e.preventdefault();
+
+        if(!description)return;
+        /////// new item add korle form e list e render hobena, sudhu console krbe,list e state re render krte hole  main je common parent component sekhane derive korte hobe child prop create kore\\\\\\\\\\\
+   const newUnit={description,quantity,packed:false,id: Date.now()};
+   console.log(newUnit);
+   onAddUnits(newUnit);
+   setDescription("");
+   setQuantity(1);
+   
     }
+//  //////////////////////
     return(
-        <form className="add-form" onSubmit={handleSubmit}>
+        <form className="add-form" onSubmit={handleSubmit} >
             <h3>what is needed for the trip?🤠</h3>
             <select
             value={quantity}
             onChange={(e)=>setQuantity(e.target.value)}>
-            {Array.from({length:20},(_,i)=>i+1)
-            .map((num)=>(
-                 <option value={num} key={num}>
+            {Array.from({length:20},(_,i)=>i+1).map((num)=>(
+                <option value={num} key={num}>
                     {num}
-                </option>))}
+                </option>
+            ))}
+
             </select>
             <input type="text" 
             placeholder="item name"
             value={description}
-            onChange={(e)=>setDescription(e.target.value)}
-            />
+            onChange={(e)=>setDescription(e.target.value)}/>
             <button>Add</button>
         </form>
     );
 }
-function  Lists(){
+function  Lists({units}){
     return (
             
         <div className="list">
             <ul>
-            {initialItems.map(item=><Items item={item}/>)}
+            {units.map(item=><Items item={item}/>)}
             </ul>
         </div>
     );
 }
-// child jsx for Items component
+// child prop for Items component
 function Items({item}){
     return(
 <span style={item.packed?{textDecoration:"Line-through"}:{}}>
@@ -78,4 +96,4 @@ function Stats(){
 <em>you have X items on your list and already packed X(%X)</em>
         </footer>
     );
-}
+} 
