@@ -7,21 +7,25 @@ const initialItems = [
   ];
 
 export default function App(){
-    const[units,setUnit]=useState([]);
+    const[units,setUnit]=useState(initialItems);
     function handleAddUnit(unit){
         setUnit((units)=>[...units,unit]);
     }
-   
+    function handleDeleteItems(id){
+        setUnit((units)=>units.filter((unit)=>unit.id!==id));
+    }
  
 return(
 <div className="app">
     <Logo/>
     <Form onAddUnits={handleAddUnit}/>
-    <Lists units={units}/>
+    <Lists units={units} onDeleteItem={handleDeleteItems}/>  {/* je function component new create korsi segulake evabe prop hisabe child component e render korte hoi */}
     <Stats/>
      </div>
 );
 }
+
+// jsx components\\
 function Logo(){
     return(
         <div>
@@ -32,22 +36,17 @@ function Logo(){
 function Form(onAddUnits){
     const [description,setDescription]=useState("");
     const[quantity,setQuantity]=useState(1);
- 
 
-////// page refresh hobena,single dynamic page\\\\\\\\\
     function handleSubmit(e){
-        e.preventdefault();
-
-        if(!description)return;
-        /////// new item add korle form e list e render hobena, sudhu console krbe,list e state re render krte hole  main je common parent component sekhane derive korte hobe child prop create kore\\\\\\\\\\\
+        e.preventdefault();////// page refresh hobena,single dynamic page\\\\\\\\\
+       if(!description)return;
    const newUnit={description,quantity,packed:false,id: Date.now()};
    console.log(newUnit);
    onAddUnits(newUnit);
    setDescription("");
    setQuantity(1);
-   
-    }
-//  //////////////////////
+   }
+    /// new item add korle form e list e render hobena, sudhu console krbe,list e state re render krte hole  main je common parent component sekhane derive korte hobe child prop create kore\\\
     return(
         <form className="add-form" onSubmit={handleSubmit} >
             <h3>what is needed for the trip?🤠</h3>
@@ -69,23 +68,23 @@ function Form(onAddUnits){
         </form>
     );
 }
-function  Lists({units}){
+function  Lists({units,onDeleteItem}){
     return (
             
         <div className="list">
             <ul>
-            {units.map(item=><Items item={item}/>)}
+            {units.map(item=><Items item={item} onDeleteItem={onDeleteItem}/>)}
             </ul>
         </div>
     );
 }
 // child prop for Items component
-function Items({item}){
+function Items({item,onDeleteItem}){
     return(
 <span style={item.packed?{textDecoration:"Line-through"}:{}}>
     <li>
         {item.quantity} {item.description}
-        <button>❎</button>     
+        <button onClick={()=>onDeleteItem(item.id)}>❎</button>     
     </li>
 </span>
    );
