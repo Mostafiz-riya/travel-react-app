@@ -3,7 +3,7 @@ import { useState } from "react";
 const initialItems = [
     { id: 1, description: "Passports🛂", quantity: 2, packed: false },
     { id: 2, description: "sunglasses🕶️", quantity: 12, packed: false },
-    { id: 3, description: "charger📴", quantity: 5, packed: true },
+    { id: 3, description: "charger📴", quantity: 5, packed: false },
   ];
 
 export default function App(){
@@ -47,7 +47,7 @@ function Form(onAddUnits){
     function handleSubmit(e){
         e.preventdefault();////// page refresh hobena,single dynamic page\\\\\\\\\
        if(!description)return;
-   const newUnit={description,quantity,packed:false,id: Date.now()};
+   const newUnit={description,quantity,packed:true,id: Date.now()};
    console.log(newUnit);
    onAddUnits(newUnit);
    setDescription("");
