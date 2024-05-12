@@ -8,18 +8,25 @@ const initialItems = [
 
 export default function App(){
     const[units,setUnit]=useState(initialItems);
+
     function handleAddUnit(unit){
         setUnit((units)=>[...units,unit]);
     }
     function handleDeleteItems(id){
         setUnit((units)=>units.filter((unit)=>unit.id!==id));
     }
- 
+    function handleToggleItems(id){
+setUnit(units=>units.map(unit=>unit.id===id?{...unit,packed:!unit.id}:unit));
+    }
+
+//  component gula sob ekhane render kora
 return(
 <div className="app">
     <Logo/>
     <Form onAddUnits={handleAddUnit}/>
-    <Lists units={units} onDeleteItem={handleDeleteItems}/>  {/* je function component new create korsi segulake evabe prop hisabe child component e render korte hoi */}
+    <Lists units={units} 
+    onDeleteItem={handleDeleteItems}
+    onToggleItem={handleToggleItems}/>  {/* je function component new create korsi segulake evabe prop hisabe child component e render korte hoi */}
     <Stats/>
      </div>
 );
@@ -68,21 +75,24 @@ function Form(onAddUnits){
         </form>
     );
 }
-function  Lists({units,onDeleteItem}){
+function  Lists({units,onDeleteItem})
+{
     return (
             
         <div className="list">
             <ul>
-            {units.map(item=><Items item={item} onDeleteItem={onDeleteItem}/>)}
+            {units.map(item=><Items item={item} onDeleteItem={onDeleteItem} onToggleItem key=
+            {item.id}/>)}
             </ul>
         </div>
     );
 }
 // child prop for Items component
-function Items({item,onDeleteItem}){
+function Items({item,onDeleteItem,onToggleItem}){
     return(
 <span style={item.packed?{textDecoration:"Line-through"}:{}}>
     <li>
+        <input type="checkbox" value={item.packed} onChange={()=>(onToggleItem(item.id))}/>
         {item.quantity} {item.description}
         <button onClick={()=>onDeleteItem(item.id)}>❎</button>     
     </li>
