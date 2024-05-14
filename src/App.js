@@ -27,7 +27,7 @@ return(
     <Lists units={units} 
     onDeleteItem={handleDeleteItems}
     onToggleItem={handleToggleItems}/>  {/* je function component new create korsi segulake evabe prop hisabe child component e render korte hoi */}
-    <Stats/>
+    <Stats units={units}/>
      </div>
 );
 }
@@ -81,8 +81,7 @@ function  Lists({units,onDeleteItem})
             
         <div className="list">
             <ul>
-            {units.map(item=><Items item={item} onDeleteItem={onDeleteItem} onToggleItem key=
-            {item.id}/>)}
+            {units.map(item=><Items item={item} onDeleteItem={onDeleteItem} onToggleItem key={units.id} />)}
             </ul>
         </div>
     );
@@ -99,10 +98,11 @@ function Items({item,onDeleteItem,onToggleItem}){
 </span>
    );
 }
-function Stats(){
+function Stats({units}){
+    const numItems=units.length;
     return(
         <footer className="stats">
-<em>you have X items on your list and already packed X(%X)</em>
+<em>you have{numItems} X items on your list and already packed X(%X)</em>
         </footer>
     );
 } 
