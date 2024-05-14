@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 
 const initialItems = [
@@ -7,16 +8,16 @@ const initialItems = [
   ];
 
 export default function App(){
-    const[units,setUnit]=useState(initialItems);
+    const[items,setUnit]=useState(initialItems);
 
-    function handleAddUnit(unit){
-        setUnit((units)=>[...units,unit]);
+    function handleAddUnit(item){
+        setUnit((items)=>[...items,item]);
     }
     function handleDeleteItems(id){
-        setUnit((units)=>units.filter((unit)=>unit.id!==id));
+        setUnit((items)=>items.filter((item)=>item.id!==id));
     }
     function handleToggleItems(id){
-setUnit(units=>units.map(unit=>unit.id===id?{...unit,packed:!unit.id}:unit));
+setUnit(items=>items.map(item=>item.id===id?{...item,packed:!item.id}:item));
     }
 
 //  component gula sob ekhane render kora
@@ -24,10 +25,10 @@ return(
 <div className="app">
     <Logo/>
     <Form onAddUnits={handleAddUnit}/>
-    <Lists units={units} 
+    <Lists items={items} 
     onDeleteItem={handleDeleteItems}
     onToggleItem={handleToggleItems}/>  {/* je function component new create korsi segulake evabe prop hisabe child component e render korte hoi */}
-    <Stats units={units}/>
+    <Stats items={items}/>
      </div>
 );
 }
@@ -75,34 +76,56 @@ function Form(onAddUnits){
         </form>
     );
 }
-function  Lists({units,onDeleteItem})
+function  Lists({items,onDeleteItem,onToggleItem})
 {
     return (
             
         <div className="list">
             <ul>
-            {units.map(item=><Items item={item} onDeleteItem={onDeleteItem} onToggleItem key={units.id} />)}
+            {items.map(item=><Items item={item} 
+            onDeleteItem={onDeleteItem}  
+            onToggleItem={onToggleItem}
+            key={item.id} />)}
             </ul>
         </div>
     );
 }
 // child prop for Items component
-function Items({item,onDeleteItem,onToggleItem}){
-    return(
-<span style={item.packed?{textDecoration:"Line-through"}:{}}>
+function Items({ item, onDeleteItem, onToggleItem }) {
+  return (
     <li>
-        <input type="checkbox" value={item.packed} onChange={()=>(onToggleItem(item.id))}/>
+      <input
+        type="checkbox"
+        value={item.packed}
+        onChange={() => onToggleItem(item.id)}
+      />
+      <span style={item.packed ? { textDecoration: "line-through" } : {}}>
         {item.quantity} {item.description}
-        <button onClick={()=>onDeleteItem(item.id)}>❎</button>     
+      </span>
+      <button onClick={() => onDeleteItem(item.id)}>❌</button>
     </li>
-</span>
-   );
+  );
 }
-function Stats({units}){
-    const numItems=units.length;
-    return(
-        <footer className="stats">
-<em>you have{numItems} X items on your list and already packed X(%X)</em>
-        </footer>
+
+function Stats({ items }) {
+  if (!items.length)
+    return (
+      <p className="stats">
+        <em>Start adding some items to your packing list 🚀</em>
+      </p>
     );
-} 
+
+  const numItems = items.length;
+  const numPacked = items.filter((item) => item.packed).length;
+  const percentage = Math.round((numPacked / numItems) * 100);
+
+  return (
+    <footer className="stats">
+      <em>
+        {percentage === 100
+          ? "You got everything! Ready to go ✈️"
+          : ` 💼 You have ${numItems} items on your list, and you already packed ${numPacked} (${percentage}%)`}
+      </em>
+    </footer>
+  );
+}
